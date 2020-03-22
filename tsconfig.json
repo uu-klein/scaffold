@@ -10,6 +10,7 @@
     "moduleResolution": "node",
     "noImplicitAny": true,
     "rootDir": "src",
+    //    "assets": "assets",
     "sourceMap": true,
     "strict": true,
     "allowJs": true,
@@ -26,9 +27,16 @@
     }
   },
   "include": [
-    "src/**/*.ts"
+    "./src/**/*",
+    ".d.ts"
   ],
   "exclude": [
-    "node_modules/**"
+    "node_modules/**",
+    "build",
+    "dist",
+    "scripts",
+    "acceptance-tests",
+    "webpack",
+    "jest"
   ]
 }

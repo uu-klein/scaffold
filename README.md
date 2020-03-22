@@ -33,3 +33,30 @@
 # HardSourceWebpackPlugin 
 # yarn add --dev HardSourceWebpackPlugin 
 
+# css部分   loader 
+# less less-loader css-loader style-loader
+# yarn add --dev less less-loader css-loader style-loader
+
+# 分离css
+# mini-css-extract-plugin
+# yarn add --dev mini-css-extract-plugin
+
+# 压缩css
+# optimize-css-assets-webpack-plugin
+# yarn add --dev optimize-css-assets-webpack-plugin
+
+# 添加css前缀
+# postcss-loader 
+# autoprefixer 
+# cssnano 
+# postcss-import
+# yarn add --dev postcss-loader autoprefixer cssnano postcss-import
+
+# 消除多余的css
+# purifycss-webpack  purify-css 
+# yarn add purifycss-webpack  purify-css 
+
+# 图片部分
+# url-loader   开发模式引用路径
+# file-loader  生产模式打包路径
+# yarn add --dev  url-loader file-loader 

@@ -12,6 +12,44 @@ module.exports = merge.smart(commonConfig, {
     output: {
         filename: 'static/js/[name]-bundle-[hash:8].js', // 输出文件
     },
+    module: {
+        noParse: /node_modules\/dist/,
+        rules: [
+            {
+                test: /\.less$/,
+                use: [
+                    {
+                        loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: {
+                                localIdentName: 'rex-[hash:base64:8]'
+                            }
+                        },
+                    },
+                    {
+                        loader: 'less-loader',
+                        options: {
+                            strictMath: true,
+                            noIeCompat: true,
+                            modules: true,
+                        },
+                    }],
+                include: paths.appFile,
+                exclude: /node_modules/,
+            },
+            {
+                test: /\.(png|jpg|gif|svg)$/,
+                loader: 'url-loader',
+                options: {
+                    name: './assets/[name].[ext]',
+                    limit: 25000,
+                }
+            }
+        ],
+    },
     // 插件
     plugins: [
         new webpack.HotModuleReplacementPlugin(),   // 热更新
