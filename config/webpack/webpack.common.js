@@ -4,6 +4,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');   // 创建html的webpack插件
 const paths = require('../commonPaths'); //引入路径文件
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const HappyPack = require('happypack');    // 多任务   加速构建速度
+const os = require('os');
+const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 
 module.exports = {
     // 解析
@@ -25,21 +28,28 @@ module.exports = {
         noParse: /node_modules\/dist/,
         rules: [
             {
-                test: /\.(ts|tsx)?$/,
+                test: /\.(jsx?|tsx?|ts?|js?)$/,
+                loader: 'happypack/loader?id=happy-babel-ts',
                 exclude: /node_modules/,
                 include: paths.appFile, // 精确指定要处理的目录
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ["@babel/preset-env", "@babel/preset-react"]
-                    }
-                },
             },
-
         ],
     },
     // 配置公共插件
     plugins: [
+        new HappyPack({
+            id: 'happy-babel-ts',
+            loaders: [
+                {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ["@babel/preset-env", "@babel/preset-react"]
+                    }
+                }
+            ],
+            threadPool: happyThreadPool,
+            verbose: true,
+        }),
         new HardSourceWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: '配置页面title',      // 配置页面title

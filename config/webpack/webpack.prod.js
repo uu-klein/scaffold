@@ -12,7 +12,11 @@ const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin');        
 // const path = require('path');  // path模块提供用于处理文件路径和目录路径的实用工具。
 // const glob = require('glob');
 // const PurifyCssPlugin = require('purifycss-webpack');                                   // 消除多余css
-
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');                      // 显示打包时间
+const chalk = require("chalk");
+const HappyPack = require('happypack');    // 多任务   加速构建速度
+const os = require('os');
+const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 // 采用多入口 进行拆分打包
 module.exports = merge.smart(commonConfig, {
     mode: 'production',
@@ -45,13 +49,29 @@ module.exports = merge.smart(commonConfig, {
         splitChunks: {
             chunks: 'all',
             minSize: 0,
+            cacheGroups: {
+                commons: {
+                    chunks: 'initial',
+                    minChunks: 2,
+                    maxInitialRequests: 5, // The default limit is too small to showcase the effect
+                    minSize: 0, // This is example is too small to create commons chunks
+                    name: 'common'
+                }
+            }
         },
     },
     module: {
         noParse: /node_modules\/dist/,
         rules: [
             {
-                test: /\.less$/,
+                test: /\.(less?|css?|sass?|scss?)$/,
+                include: paths.appFile,
+                exclude: /node_modules/,
+                // loaders: [
+                //     MiniCssExtractPlugin.loader,
+                //     'happypack/loader?id=happy-babel-less',
+                // ]
+                // loader: 'happypack/loader?id=happy-babel-less',
                 use: [
                     MiniCssExtractPlugin.loader,
                     {
@@ -79,9 +99,8 @@ module.exports = merge.smart(commonConfig, {
                             noIeCompat: true,
                             modules: true,
                         },
-                    }],
-                include: paths.appFile,
-                exclude: /node_modules/,
+                    }
+                ],
             },
             {
                 test: /\.(png|jpg|gif|svg)$/,
@@ -95,11 +114,98 @@ module.exports = merge.smart(commonConfig, {
     plugins: [
         new CleanWebpackPlugin(),
         new BundleAnalyzerPlugin(),
+        // new HappyPack({
+        //     id: 'happy-babel-less',
+        //     threadPool: happyThreadPool,
+        //     verbose: true,
+        //     loaders: [
+        //         // MiniCssExtractPlugin.loader,
+        //         {
+        //             loader: 'css-loader',
+        //             options: {
+        //                 // cacheDirectory: true,
+        //                 importLoaders: 2,
+        //                 modules: {
+        //                     localIdentName: 'rex-[hash:base64:8]'
+        //                 }
+        //             },
+        //         },
+        //         {
+        //             loader: 'postcss-loader',
+        //             options: {
+        //                 cacheDirectory: true,
+        //                 plugins: (loader) => [
+        //                     require('postcss-import')({root: loader.resourcePath}),
+        //                     require('autoprefixer')(), //CSS浏览器兼容
+        //                     require('cssnano')()  //压缩css
+        //                 ]
+        //             }
+        //         },
+        //         {
+        //             loader: 'less-loader',
+        //             options: {
+        //                 cacheDirectory: true,
+        //                 strictMath: true,
+        //                 noIeCompat: true,
+        //                 modules: true,
+        //             },
+        //         }
+        //     ]
+        // }),
+        // new HappyPack({
+        //     id: 'happypack/loader?id=happy-babel-cssloader',
+        //     loaders: [
+        //         {
+        //             loader: 'css-loader',
+        //             options: {
+        //                 cacheDirectory: true,
+        //                 modules: {
+        //                     localIdentName: 'rex-[hash:base64:8]'
+        //                 }
+        //             }
+        //         }
+        //     ]
+        // }),
+        // new HappyPack({
+        //     id: 'happypack/loader?id=happy-babel-postcssloader',
+        //     loaders: [
+        //         {
+        //             loader: 'postcss-loader',
+        //             options: {
+        //                 cacheDirectory: true,
+        //                 plugins: (loader) => [
+        //                     require('postcss-import')({root: loader.resourcePath}),
+        //                     require('autoprefixer')(), //CSS浏览器兼容
+        //                     require('cssnano')()  //压缩css
+        //                 ]
+        //             }
+        //         }
+        //     ]
+        // }),
+        // new HappyPack({
+        //     id: 'happypack/loader?id=happy-babel-lessloader',
+        //     loaders: [
+        //         {
+        //             loader: 'less-loader',
+        //             options: {
+        //                 cacheDirectory: true,
+        //                 strictMath: true,
+        //                 noIeCompat: true,
+        //                 modules: true,
+        //             }
+        //         }
+        //     ]
+        // }),
+
+
         new MiniCssExtractPlugin({
             filename: 'static/css/[name].css',
             chunkFilename: '[id].css',
             ignoreOrder: false
         }),
+        new ProgressBarPlugin({
+            format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)'
+        })
         // new PurifyCssPlugin({      并不能去除无用css
         //     // paths: glob.sync(paths.appHtml),
         //     paths: glob.sync(path.join(__dirname, 'src/*')),

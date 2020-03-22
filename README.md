@@ -31,7 +31,8 @@
 
 # 优化构建速度
 # HardSourceWebpackPlugin 
-# yarn add --dev HardSourceWebpackPlugin 
+# happypack 多任务
+# yarn add --dev HardSourceWebpackPlugin  happypack
 
 # css部分   loader 
 # less less-loader css-loader style-loader
@@ -60,3 +61,7 @@
 # url-loader   开发模式引用路径
 # file-loader  生产模式打包路径
 # yarn add --dev  url-loader file-loader 
+
+# 显示打包时间
+# progress-bar-webpack-plugin
+# yarn add progress-bar-webpack-plugin
