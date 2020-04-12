@@ -9,14 +9,11 @@ const paths = require('../commonPaths');                                        
 const commonConfig = require('./webpack.common');                                       // 公共文件
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');                        // 分离css
 const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin');                // 导入样式压缩
-// const path = require('path');  // path模块提供用于处理文件路径和目录路径的实用工具。
-// const glob = require('glob');
-// const PurifyCssPlugin = require('purifycss-webpack');                                   // 消除多余css
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');                      // 显示打包时间
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');                       // 显示打包时间
 const chalk = require("chalk");
-const HappyPack = require('happypack');    // 多任务   加速构建速度
-const os = require('os');
-const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
+// const HappyPack = require('happypack');    // 多任务   加速构建速度
+// const os = require('os');
+// const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 // 采用多入口 进行拆分打包
 module.exports = merge.smart(commonConfig, {
     mode: 'production',
@@ -104,10 +101,21 @@ module.exports = merge.smart(commonConfig, {
             },
             {
                 test: /\.(png|jpg|gif|svg)$/,
-                loader: 'file-loader',
-                options: {
-                    name: 'assets/[name].[ext]'
-                }
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'assets/[name].[ext]'
+                        }
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            bypassOnDebug: true
+                        }
+                    }
+                ],
+
             }
         ]
     },
@@ -197,18 +205,13 @@ module.exports = merge.smart(commonConfig, {
         //     ]
         // }),
 
-
+        new ProgressBarPlugin({
+            format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)'
+        }),
         new MiniCssExtractPlugin({
             filename: 'static/css/[name].css',
             chunkFilename: '[id].css',
             ignoreOrder: false
         }),
-        new ProgressBarPlugin({
-            format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)'
-        })
-        // new PurifyCssPlugin({      并不能去除无用css
-        //     // paths: glob.sync(paths.appHtml),
-        //     paths: glob.sync(path.join(__dirname, 'src/*')),
-        // })
     ],
 });

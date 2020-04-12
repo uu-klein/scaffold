@@ -53,15 +53,12 @@
 # postcss-import
 # yarn add --dev postcss-loader autoprefixer cssnano postcss-import
 
-# 消除多余的css
-# purifycss-webpack  purify-css 
-# yarn add purifycss-webpack  purify-css 
+# 显示打包时间
+# progress-bar-webpack-plugin
+# yarn add progress-bar-webpack-plugin
 
 # 图片部分
 # url-loader   开发模式引用路径
 # file-loader  生产模式打包路径
+# image-webpack-loader 压缩图片
 # yarn add --dev  url-loader file-loader 
-
-# 显示打包时间
-# progress-bar-webpack-plugin
-# yarn add progress-bar-webpack-plugin
