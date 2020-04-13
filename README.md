@@ -62,3 +62,7 @@
 # file-loader  生产模式打包路径
 # image-webpack-loader 压缩图片
 # yarn add --dev  url-loader file-loader 
+
+# pwa 
+# workbox
+# yarn add workbox-webpack-plugin

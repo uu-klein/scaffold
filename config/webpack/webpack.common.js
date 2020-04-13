@@ -8,6 +8,8 @@ const HappyPack = require('happypack');    // 多任务   加速构建速度
 const os = require('os');
 const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 
+const WorkBoxPlugin = require('workbox-webpack-plugin');
+
 module.exports = {
     // 解析
     resolve: {
@@ -60,6 +62,62 @@ module.exports = {
                 collapseWhitespace: true, //折叠代码为一行
             },
             hash: true                   //清除缓存
+        }),
+
+        new WorkBoxPlugin.GenerateSW({
+            // 在预缓存中排除 图片
+            exclude: [/\.(?:png|jpg|jpeg|svg)$/],
+
+            //定义运行时缓存（可接受多个json对象）
+            runtimeCaching: [
+                {
+                    urlPattern: /\.(?:png|jpg|jpeg|svg)$/,
+                    // 在缓存时使用 StaleWhileRevalidate 策略.
+                    handler: "StaleWhileRevalidate",
+                    options: {
+                        // 定义缓存这些图片的 cache名称
+                        cacheName: "images",
+
+                        //配置 expiration
+                        expiration: {
+                            maxEntries: 10,
+                            maxAgeSeconds: 60
+                        },
+
+                        // 配置 background sync.
+                        backgroundSync: {
+                            name: "queue",
+                            options: {
+                                maxRetentionTime: 60 * 60
+                            }
+                        },
+
+                        //配置哪些响应被认为是可缓存的
+                        cacheableResponse: {
+                            statuses: [0, 200],
+                            headers: {"x-test": "true"}
+                        },
+
+                        //配置广播缓存更新插件。
+                        broadcastUpdate: {
+                            channelName: "update"
+                        },
+
+                        //matchOptions和fetchOptions用于配置handler
+                        fetchOptions: {
+                            mode: "no-cors"
+                        },
+                        matchOptions: {
+                            ignoreSearch: true
+                        }
+                    }
+                }
+            ],
+
+            skipWaiting: false, // service worker是否应该跳过等待生命周期阶段
+            clientsClaim: false, //service worker是否应该在任何现有客户端激活后立即开始控制它
+            cacheId: "work-webpack-plugin",
+            offlineGoogleAnalytics: true
         }),
     ],
 };

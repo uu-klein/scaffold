@@ -17,7 +17,7 @@ ReactDOM.render(
             className={styles1.div1111}
         >
             Hello000000React
-            {/*<img src={aa} alt={''}/>*/}
+            <img src={'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png'} alt={''}/>
         </div>
     </div>,
     document.getElementById('root'),
