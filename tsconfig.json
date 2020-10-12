@@ -10,7 +10,6 @@
     "moduleResolution": "node",
     "noImplicitAny": true,
     "rootDir": "src",
-    //    "assets": "assets",
     "sourceMap": true,
     "strict": true,
     "allowJs": true,
@@ -40,4 +39,3 @@
     "jest"
   ]
 }
-

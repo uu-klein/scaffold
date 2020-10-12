@@ -1,0 +1,5 @@
+export const actionTypes = {
+    CHANGE_MENU: 'CHANGE_MENU',
+    CHANGE_ACCOUNT: 'CHANGE_ACCOUNT',
+    CHANGE_USERINFO: 'CHANGE_USERINFO',
+};

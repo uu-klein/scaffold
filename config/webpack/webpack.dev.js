@@ -1,16 +1,17 @@
 /**
  * 开发模式配置文件
  * */
-const webpack = require('webpack');         // 引入webpack
-const merge = require('webpack-merge');     // 合并配置插件
-const paths = require('../commonPaths');          //  引入路径
-const commonConfig = require('./webpack.common');   // 引入公共配置
+const webpack = require('webpack');
+const {merge} = require('webpack-merge');
+const paths = require('./webpack.common.paths');
+const commonConfig = require('./webpack.common');
 
-module.exports = merge.smart(commonConfig, {
-    mode: 'development',//  开发模式
+const devConfig = {
+    // mode: 'development',//  开发模式
+
     entry: paths.appIndex, // 入口
     output: {
-        filename: 'static/js/[name]-bundle-[hash:8].js', // 输出文件
+        filename: 'static/js/[name]-bundle-[hash:8].js',
     },
     module: {
         noParse: /node_modules\/dist/,
@@ -45,14 +46,29 @@ module.exports = merge.smart(commonConfig, {
                 loader: 'url-loader',
                 options: {
                     name: './assets/[name].[ext]',
-                    limit: 25000,
+                    limit: 2048,
                 }
             }
         ],
     },
-    // 插件
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),   // 热更新
+        new webpack.HotModuleReplacementPlugin(),
     ],
+    devServer: {
+        historyApiFallback: true,
+        disableHostCheck: true,
+        inline: true,
+        hot: true,
+        compress: true,
+        proxy: {
+            "/api": {
+                target: "url",
+                changeOrigin: true,
+                pathRewrite: {"^/api": ""}
+            },
+        },
+    },
+};
 
-});
+
+module.exports = merge(commonConfig, devConfig);
